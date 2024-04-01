@@ -1,6 +1,6 @@
 # [qBittorrent](https://github.com/qbittorrent/qBittorrent) and WireGuard
 
-Docker container which runs  [qBittorrent](https://github.com/qbittorrent/qBittorrent)-nox (headless) version 4.6.4 client while connecting to WireGuard with iptables killswitch to prevent IP leakage when the tunnel goes down.
+Docker container which runs [qBittorrent](https://github.com/qbittorrent/qBittorrent)-nox (headless) version 4.6.4 client while connecting to WireGuard with iptables killswitch to prevent IP leakage when the tunnel goes down.
 
 # Docker Features
 * Base: Alpine Linux
@@ -35,7 +35,8 @@ $ docker run  -d \
 ## Environment Variables
 | Variable | Required | Function | Example | Default |
 |----------|----------|----------|----------|----------|
-|`LAN_NETWORK`| Yes (atleast one) | Comma delimited local Network's with CIDR notation |`LAN_NETWORK=192.168.0.0/24,10.10.0.0/24`||
+|`QBT_LEGAL_NOTICE`| Yes | Required by qBittorrent, indicates that you accept their [legal notice](https://github.com/qbittorrent/qBittorrent/blob/56667e717b82c79433ecb8a5ff6cc2d7b315d773/src/app/main.cpp#L320-L323). |`QBT_LEGAL_NOTICE=confirm`||
+|`LAN_NETWORK`| Yes (at least one) | Comma delimited local Network's with CIDR notation |`LAN_NETWORK=192.168.0.0/24,10.10.0.0/24`||
 |`ENABLE_SSL`| No | Let the container handle SSL (yes/no/ignore)? |`ENABLE_SSL=yes`|`ignore`|
 |`NAME_SERVERS`| No | Comma delimited name servers |`NAME_SERVERS=1.1.1.1,1.0.0.1`|`1.1.1.1,1.0.0.1`|
 |`PUID`| Yes | UID applied to /config files and /downloads |`PUID=99`||
@@ -51,6 +52,7 @@ $ docker run  -d \
 |`WEBUI_URL` | Only if port fwd enabled | Allows the script to use the WebUI API to set the forwarded port automatically. | `WEBUI_URL=https://webui.domain.com` / `WEBUI_URL=http://192.168.1.17` ||
 |`WEBUI_USER` | Only if port fwd enabled | Allows the script to use the WebUI API to set the forwarded port automatically. | `WEBUI_USER=admin` ||
 |`WEBUI_PASS` | Only if port fwd enabled | Allows the script to use the WebUI API to set the forwarded port automatically. | `WEBUI_PASS=adminadmin` ||
+|`TZ` | No | Sets the time zone in the container so that log date/time will match your local date/time. | `TZ=America/New_York' ||
 
 ## Volumes
 | Volume | Required | Function | Example |

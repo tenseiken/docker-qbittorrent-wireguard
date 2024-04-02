@@ -6,30 +6,12 @@ Docker container which runs [qBittorrent](https://github.com/qbittorrent/qBittor
 * Base: Alpine Linux
 * [qBittorrent](https://github.com/qbittorrent/qBittorrent) from the official Docker repo (qbittorrentofficial/qbittorrent-nox:4.6.4-1)
 * Uses the Wireguard VPN software.
-* IP tables killswitch to prevent IP leaking when VPN connection fails
-* Configurable UID and GID for config files and /downloads for qBittorrent
-* BitTorrent port 8999 exposed by default
+* IP tables killswitch to prevent IP leaking when VPN connection fails.
+* Configurable UID and GID for config files and /downloads for qBittorrent.
+* BitTorrent port 8999 exposed by default.
 * Automatically restarts the qBittorrent process in the event of it crashing.
 * Adds VueTorrent (alternate web UI) which can be enabled (or not) by the user.
 * Works with Proton VPN's port forward VPN servers to automatically enable forwarding in your container, and automatically sets the connection port in qBittorrent to match the forwarded port.
-
-## Run container from Docker registry
-The container is available from the Docker registry and this is the simplest way to get it  
-To run the container use this command, with additional parameters, please refer to the Variables, Volumes, and Ports section:
-
-```
-$ docker run  -d \
-              -v /your/config/path/:/config \
-              -v /your/downloads/path/:/downloads \
-              -e "VPN_ENABLED=yes" \
-              -e "VPN_TYPE=wireguard" \
-              -e "LAN_NETWORK=192.168.0.0/24" \
-              -p 8080:8080 \
-              --cap-add NET_ADMIN \
-              --sysctl "net.ipv4.conf.all.src_valid_mark=1" \
-              --restart unless-stopped \
-              tenseiken/qbittorrentvpn:latest
-```
 
 # Variables, Volumes, and Ports
 ## Environment Variables
@@ -78,7 +60,7 @@ Access https://IPADDRESS:PORT from a browser on the same network. (for example: 
 |`password`| `adminadmin` |
 
 # How to use WireGuard 
-The container will fail to boot if `VPN_ENABLED` is set and there is no valid .conf file present in the /config/wireguard directory. Drop a .conf file from your VPN provider into /config/wireguard and start the container again. The file must have the name `wg0.conf`, or it will fail to start.
+Drop a .conf file from your VPN provider into /config/wireguard and start the container. The file must have the name `wg0.conf`, or it will fail to start.
 
 ## WireGuard IPv6 issues
 If you use WireGuard and also have IPv6 enabled, it is necessary to add the IPv6 range to the `LAN_NETWORK` environment variable.  
@@ -102,10 +84,30 @@ User ID (PUID) and Group ID (PGID) can be found by issuing the following command
 id <username>
 ```
 
+## Run Container from Docker Hub
+The container is available from the Docker Hub and this is the simplest way to get it. Alternatively, you can clone this repo and build the image yourself if you want.
+The following is a run command with the minimum required arguments. Please refer to the "Variables, Volumes, and Ports" section for more info about additional features.
+
+```
+$ docker run  -d \
+              -v /your/config/path/:/config \
+              -v /your/downloads/path/:/downloads \
+              -e "QBT_LEGAL_NOTICE=confirm" \
+              -e "PUID=1234" \
+              -e "PGID=123" \
+              -e "LAN_NETWORK=192.168.0.0/24" \
+              -p 8080:8080 \
+              --cap-add NET_ADMIN \
+              --sysctl "net.ipv4.conf.all.src_valid_mark=1" \
+              --restart unless-stopped \
+              --name qbittorrent-wireguard \
+              tenseiken/qbittorrent-wireguard:latest
+```
+
 # Issues
 If you are having issues with this container please submit an issue on GitHub.  
 Please provide logs, Docker version and other information that can simplify reproducing the issue.  
-If possible, always use the most up to date version of Docker, you operating system, kernel and the container itself. Support is always a best-effort basis.
+If possible, always use the most up to date version of Docker, your operating system, kernel and the container itself. Support is always a best-effort basis.
 
 # Credits
 * [DyonR/docker-qBittorrentvpn](https://github.com/DyonR/docker-qbittorrentvpn)

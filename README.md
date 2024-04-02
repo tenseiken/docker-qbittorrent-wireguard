@@ -107,10 +107,10 @@ If you are having issues with this container please submit an issue on GitHub.
 Please provide logs, Docker version and other information that can simplify reproducing the issue.  
 If possible, always use the most up to date version of Docker, you operating system, kernel and the container itself. Support is always a best-effort basis.
 
-### Credits:
+# Credits
 * [DyonR/docker-qBittorrentvpn](https://github.com/DyonR/docker-qbittorrentvpn)
 
-This project originates from DyonR/docker-qbittorrentvpn, but forking wasn't possible because tenseiken/docker-qbittorrentvpn uses the fork already. I forked to tenseiken/docker-qbittorrentvpn to make some minor adjustments to the code in order to send a pull request to the original repo, but the PR was never accepted and the original project was archived. This new project drops the OpenVPN support since Wireguard is the superior option, and and VPN provider worth using offers Wireguard servers. I also dropped the option to just not use a VPN. If you don't wish to use a VPN, I highly recommend you make use of the [official qBittorrent repo](https://hub.docker.com/r/qbittorrentofficial/qbittorrent-nox) instead of this one.
+This project originates from DyonR/docker-qbittorrentvpn, but forking wasn't possible because tenseiken/docker-qbittorrentvpn uses the fork already. I forked to tenseiken/docker-qbittorrentvpn to make some minor adjustments to the code in order to send a pull request to the original repo, but the PR was never accepted and the original project was archived. This new project drops the OpenVPN support since Wireguard is the superior option, and any VPN provider worth using offers Wireguard servers. I also dropped the option to just not use a VPN. If you don't wish to use a VPN, I highly recommend you make use of the [official qBittorrent repo](https://hub.docker.com/r/qbittorrentofficial/qbittorrent-nox) instead of this one.
 
 * [MarkusMcNugen/docker-qBittorrentvpn](https://github.com/MarkusMcNugen/docker-qBittorrentvpn)  
 * [DyonR/jackettvpn](https://github.com/DyonR/jackettvpn)

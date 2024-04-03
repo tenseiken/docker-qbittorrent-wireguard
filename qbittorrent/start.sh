@@ -18,11 +18,6 @@ if [ ! -e /config/qBittorrent/config/qBittorrent.conf ]; then
 	chown ${PUID}:${PGID} /config/qBittorrent/config/qBittorrent.conf
 fi
 
-export INSTALL_PYTHON3=$(echo "${INSTALL_PYTHON3,,}")
-if [[ $INSTALL_PYTHON3 == "1" || $INSTALL_PYTHON3 == "true" || $INSTALL_PYTHON3 == "yes" ]]; then
-	/bin/bash /etc/qbittorrent/install-python3.sh
-fi
-
 # The mess down here checks if SSL is enabled.
 export ENABLE_SSL=$(echo "${ENABLE_SSL,,}")
 
@@ -141,7 +136,7 @@ if [ -e /proc/$qbittorrentpid ]; then
 		# Confirm the process is still running, start it back up if it's not.
 		if ! ps -p $qbittorrentpid > /dev/null; then
 			echo "[ERROR] qBittorrent daemon is not running. Restarting..." | ts '%Y-%m-%d %H:%M:%.S'
-			nohup /bin/bash /entrypoint.sh
+			nohup /bin/bash /entrypoint.sh > /dev/null 2>&1 &
 
 			# wait for the entrypoint.sh script to finish and grab the qbittorrent pid
 			while ! pgrep -f "qbittorrent-nox" > /dev/null; do

@@ -45,6 +45,8 @@ services:
     security_opt:
       - "label=disable"
     stdin_open: true
+    sysctls:
+      - "net.ipv4.conf.all.src_valid_mark=1"
     tty: true
     volumes:
       - "/host/path/to/downloads:/downloads"

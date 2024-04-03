@@ -1,6 +1,8 @@
 version: "3.6"
 services:
   qbittorrent-wireguard:
+    cap_add:
+      - "NET_ADMIN"
     cap_drop:
       - "AUDIT_CONTROL"
       - "BLOCK_SUSPEND"

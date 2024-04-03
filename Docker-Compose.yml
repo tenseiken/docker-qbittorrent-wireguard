@@ -1,0 +1,52 @@
+version: "3.6"
+services:
+  qbittorrent-wireguard:
+    cap_drop:
+      - "AUDIT_CONTROL"
+      - "BLOCK_SUSPEND"
+      - "DAC_READ_SEARCH"
+      - "IPC_LOCK"
+      - "IPC_OWNER"
+      - "LEASE"
+      - "LINUX_IMMUTABLE"
+      - "MAC_ADMIN"
+      - "MAC_OVERRIDE"
+      - "NET_BROADCAST"
+      - "SYSLOG"
+      - "SYS_ADMIN"
+      - "SYS_BOOT"
+      - "SYS_MODULE"
+      - "SYS_NICE"
+      - "SYS_PACCT"
+      - "SYS_PTRACE"
+      - "SYS_RAWIO"
+      - "SYS_RESOURCE"
+      - "SYS_TIME"
+      - "SYS_TTY_CONFIG"
+      - "WAKE_ALARM"
+    container_name: "qbittorrent-wireguard"
+    entrypoint:
+      - "/bin/bash"
+      - "/start.sh"
+    environment:
+      - "PUID=1234"
+      - "PGID=567"
+      - "LAN_NETWORK=192.168.1.0/24"
+      - "QBT_LEGAL_NOTICE=confirm"
+    image: "docker.io/tenseiken/qbittorrent-wireguard:latest"
+    ipc: "private"
+    network_mode: "bridge"
+    ports:
+      - "8999:8999/tcp"
+      - "8999:8999/udp"
+      - "8080:8080/tcp"
+    privileged: true
+    restart: "unless-stopped"
+    security_opt:
+      - "label=disable"
+    stdin_open: true
+    tty: true
+    volumes:
+      - "/host/path/to/downloads:/downloads"
+      - "/host/path/to/config:/config"
+    working_dir: "/opt"

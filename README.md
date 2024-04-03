@@ -104,6 +104,8 @@ $ docker run  -d \
               tenseiken/qbittorrent-wireguard:latest
 ```
 
+If you prefer to use docker-compose instead of docker run, you can use the Docker-Compose.yml file to get started. It only has the required configuration (as with the docker run command above), but it will get you started.
+
 # Issues
 If you are having issues with this container please submit an issue on GitHub.  
 Please provide logs, Docker version and other information that can simplify reproducing the issue.  

@@ -10,7 +10,7 @@ Docker container which runs [qBittorrent](https://github.com/qbittorrent/qBittor
 * Configurable UID and GID for config files and /downloads for qBittorrent.
 * BitTorrent port 8999 exposed by default.
 * Automatically restarts the qBittorrent process in the event of it crashing.
-* Adds VueTorrent (alternate web UI) which can be enabled (or not) by the user.
+* Adds [VueTorrent](https://github.com/VueTorrent/VueTorrent) (alternate web UI) which can be enabled (or not) by the user.
 * Works with Proton VPN's port forward VPN servers to automatically enable forwarding in your container, and automatically sets the connection port in qBittorrent to match the forwarded port.
 
 # Variables, Volumes, and Ports
@@ -77,14 +77,14 @@ If you use Proton VPN as your VPN provider, they offer a feature called port for
 
 With all of that set up, port forwarding will be automatically established for you, and the listen port in qBittorrent will be set automatically.
 
-## PUID/PGID
+# PUID/PGID
 User ID (PUID) and Group ID (PGID) can be found by issuing the following command for the user you want to run the container as:
 
 ```
 id <username>
 ```
 
-## Run Container from Docker Hub
+# Run Container from Docker Hub
 The container is available from the Docker Hub and this is the simplest way to get it. Alternatively, you can clone this repo and build the image yourself if you want.
 The following is a run command with the minimum required arguments. Please refer to the "Variables, Volumes, and Ports" section for more info about additional features.
 
@@ -105,6 +105,17 @@ $ docker run  -d \
 ```
 
 If you prefer to use docker-compose instead of docker run, you can use the Docker-Compose.yml file to get started. It only has the required configuration (as with the docker run command above), but it will get you started.
+
+# Using VueTorrent
+If you'd like to use [VueTorrent](https://github.com/VueTorrent/VueTorrent), do the following in your web UI once it's up and running:
+
+- Click the "Settings" gear icon.
+- Click the "Web UI" tab.
+- Check the box for "Use alternative Web UI".
+- Set the "Files location" text box to: `/etc/vuetorrent`
+- Click "Save".
+- The page will refresh and load the VueTorrent web UI. 
+- Log in with your normal web UI credentials.
 
 # Issues
 If you are having issues with this container please submit an issue on GitHub.  

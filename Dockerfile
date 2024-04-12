@@ -4,7 +4,7 @@ FROM qbittorrentofficial/qbittorrent-nox:4.6.4-1
 WORKDIR /opt
 
 # Make directories
-RUN mkdir -p /downloads /config/qBittorrent /etc/openvpn /etc/qbittorrent
+RUN mkdir -p /downloads /config/qBittorrent /etc/qbittorrent /etc/vuetorrent
 
 # Download and extract VueTorrent
 RUN apk --no-cache --update-cache update \
@@ -12,13 +12,15 @@ RUN apk --no-cache --update-cache update \
     && apk --no-cache --update-cache add \
 	curl \
 	unzip \
-    && VUETORRENT_RELEASE=v2.7.2 \
-    && curl -o /config/vuetorrent.zip -L "https://github.com/VueTorrent/VueTorrent/releases/download/${VUETORRENT_RELEASE}/vuetorrent.zip" \
-    && cd /config \
-	&& unzip vuetorrent.zip \
+	jq \
+    && VUETORRENT_RELEASE=$(curl -sX GET "https://api.github.com/repos/VueTorrent/VueTorrent/tags" | jq '.[] | .name' | head -n 1 | tr -d '"') \
+    && curl -o vuetorrent.zip -L "https://github.com/VueTorrent/VueTorrent/releases/download/${VUETORRENT_RELEASE}/vuetorrent.zip" \
+	&& unzip vuetorrent.zip -d /etc \
+	&& rm vuetorrent.zip \
 	&& apk del \
     curl \
-	unzip
+	unzip \
+	jq
 
 # Install WireGuard and some other dependencies some of the scripts in the container rely on.
 RUN apk --no-cache --update-cache update \
@@ -35,7 +37,6 @@ RUN apk --no-cache --update-cache update \
     net-tools \
 	libnatpmp \
     openresolv \
-    openvpn \
     procps \
     wireguard-tools
 

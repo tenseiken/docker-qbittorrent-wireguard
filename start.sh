@@ -50,9 +50,6 @@ if [[ "${VPN_CONFIG}" != "/config/wireguard/wg0.conf" ]]; then
 	exit 1
 fi
 
-# convert CRLF (windows) to LF (unix) for ovpn
-dos2unix "${VPN_CONFIG}" 1> /dev/null
-
 # parse values from the wireguard conf file
 export vpn_remote_line=$(cat "${VPN_CONFIG}" | grep -o -m 1 '^Endpoint\s=\s.*$' | cut -d \  -f 3)
 

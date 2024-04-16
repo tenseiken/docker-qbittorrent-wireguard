@@ -27,7 +27,6 @@ RUN apk --no-cache --update-cache update \
     && apk --no-cache --update-cache add \
 	bash \
 	curl \
-    dos2unix \
     iputils-ping \
     ipcalc \
     iptables \

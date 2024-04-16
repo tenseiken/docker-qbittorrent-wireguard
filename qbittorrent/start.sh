@@ -82,13 +82,6 @@ qbittorrentpid=$(pgrep -f "qbittorrent-nox")
 if [ -e /proc/$qbittorrentpid ]; then
 	echo "[INFO] qBittorrent PID: $qbittorrentpid" | ts '%Y-%m-%d %H:%M:%.S'
 
-	# trap the TERM signal for propagation and graceful shutdowns
-	handle_term() {
-		echo "[INFO] Received SIGTERM, stopping..." | ts '%Y-%m-%d %H:%M:%.S'
-		/bin/bash /etc/qbittorrent/qbittorrent.init stop
-		exit $?
-	}
-	trap handle_term SIGTERM
 	if [[ -e /config/qBittorrent/data/logs/qbittorrent.log ]]; then
 		chmod 775 /config/qBittorrent/data/logs/qbittorrent.log
 	fi

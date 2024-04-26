@@ -39,15 +39,17 @@ Docker container which runs [qBittorrent](https://github.com/qbittorrent/qBittor
 ## Volumes
 | Volume | Required | Function | Example |
 |----------|----------|----------|----------|
-| `config` | Yes | qBittorrent, WireGuard and OpenVPN config files | `/your/config/path/:/config`|
+| `config` | Yes | qBittorrent and WireGuard config files | `/your/config/path/:/config`|
 | `downloads` | No | Default downloads path for saving downloads | `/your/downloads/path/:/downloads`|
 
 ## Ports
 | Port | Proto | Required | Function | Example |
 |----------|----------|----------|----------|----------|
 | `8080` | TCP | Yes | qBittorrent WebUI | `8080:8080`|
-| `8999` | TCP | Yes | qBittorrent TCP Listening Port | `8999:8999`|
-| `8999` | UDP | Yes | qBittorrent UDP Listening Port | `8999:8999/udp`|
+| `8999` | TCP | No | qBittorrent TCP Listening Port | `8999:8999`|
+| `8999` | UDP | No | qBittorrent UDP Listening Port | `8999:8999/udp`|
+
+The listening port is only required if you aren't using the Proton VPN port forwarding logic.
 
 # Access the WebUI
 Access https://IPADDRESS:PORT from a browser on the same network. (for example: https://192.168.0.90:8080)
@@ -77,7 +79,7 @@ If you use Proton VPN as your VPN provider, they offer a feature called port for
 - Set the `WEBUI_USER` environment variable in your container to the username you use to authenticate with your qBittorrent web UI.
 - Set the `WEBUI_PASS` environment variable in your container to the password you use to authenticate with your qBittorrent web UI.
 
-With all of that set up, port forwarding will be automatically established for you, and the listen port in qBittorrent will be set automatically.
+With all of that set up, port forwarding will be automatically established for you, and the listen port in qBittorrent will be set automatically. You can confirm that you are connectable by inputting your exit IP (run `curl ip.me` from inside the container) and the listen port from qBittorrent into [this website](https://www.yougetsignal.com/tools/open-ports/) and running the check.
 
 # PUID/PGID
 User ID (PUID) and Group ID (PGID) can be found by issuing the following command for the user you want to run the container as:

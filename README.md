@@ -64,7 +64,7 @@ Access https://IPADDRESS:PORT from a browser on the same network. (for example: 
 For the sake of your own security, make sure you change these values immediately upon logging into the web UI for the first time. You can do so from the web UI by going to `Tools -> Options -> Web UI`. From there, in the `Authentication` section, change your username and password and click `Save` at the bottom. Be sure to use a strong, random password.
 
 # How to use WireGuard 
-Drop a .conf file from your VPN provider into /config/wireguard and start the container. The file must have the name `wg0.conf`, or it will fail to start.
+Drop a .conf file from your VPN provider into /config/wireguard and start the container. The file must have the name `wg0.conf`, or it will fail to start. In the qBittorrent web UI, go to `Tools -> Options -> Advanced` and set `Network Interface` to `wg0`. This instructs qBittorrent to only use the Wireguard network connection.
 
 ## WireGuard IPv6 issues
 If you use WireGuard and also have IPv6 enabled, it is necessary to add the IPv6 range to the `LAN_NETWORK` environment variable.  

@@ -19,7 +19,7 @@ Docker container which runs [qBittorrent](https://github.com/qbittorrent/qBittor
 |----------|----------|----------|----------|----------|
 |`QBT_LEGAL_NOTICE`| Yes | Required by qBittorrent, indicates that you accept their [legal notice](https://github.com/qbittorrent/qBittorrent/blob/56667e717b82c79433ecb8a5ff6cc2d7b315d773/src/app/main.cpp#L320-L323). |`QBT_LEGAL_NOTICE=confirm`||
 |`LAN_NETWORK`| Yes (at least one) | Comma delimited local Network's with CIDR notation |`LAN_NETWORK=192.168.0.0/24,10.10.0.0/24`||
-|`ENABLE_SSL`| No | Let the container handle SSL (yes/no/ignore)? |`ENABLE_SSL=yes`|`ignore`|
+|`ENABLE_SSL`| No | Enable SSL automatically (yes), disable it automatically (no), or ignore it so it can be managed by the user (ignore). |`ENABLE_SSL=yes`|`ignore`|
 |`NAME_SERVERS`| No | Comma delimited name servers |`NAME_SERVERS=1.1.1.1,1.0.0.1`|`1.1.1.1,1.0.0.1`|
 |`PUID`| Yes | UID applied to /config files and /downloads |`PUID=99`||
 |`PGID`| Yes | GID applied to /config files and /downloads  |`PGID=100`||

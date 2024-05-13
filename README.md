@@ -34,7 +34,7 @@ Docker container which runs [qBittorrent](https://github.com/qbittorrent/qBittor
 |`WEBUI_URL` | Only if port fwd enabled | Allows the script to use the WebUI API to set the forwarded port automatically. | `WEBUI_URL=https://webui.domain.com` / `WEBUI_URL=http://192.168.1.17` ||
 |`WEBUI_USER` | Only if port fwd enabled | Allows the script to use the WebUI API to set the forwarded port automatically. | `WEBUI_USER=admin` ||
 |`WEBUI_PASS` | Only if port fwd enabled | Allows the script to use the WebUI API to set the forwarded port automatically. | `WEBUI_PASS=adminadmin` ||
-|`TZ` | No | Sets the time zone in the container so that log date/time will match your local date/time. | `TZ=America/New_York' ||
+|`TZ` | No | Sets the time zone in the container so that log date/time will match your local date/time. | `TZ=America/New_York` ||
 
 ## Volumes
 | Volume | Required | Function | Example |
@@ -75,7 +75,7 @@ If you use Proton VPN as your VPN provider, they offer a feature called port for
 
 - Use your Proton VPN account to acquire a Wireguard config file for one of their port-forwarding-enabled servers. These are paid servers--the free ones do not support it. Save this config file as wg0.conf in the Wireguard config directory just like you would any other Wireguard config file.
 - Set the `ENABLEPROTONVPNPORTFWD` environment variable in your container to 1.
-- Set the `WEBUI_URL` environment variable in your container to the URL you use to access your qBittorrent web UI. This can be the local IP (ex: http://192.168.1.17) or a public URL if you have one (ex: https://qbittorrent.mydomain.com). As long as the container can reach this URL over its network, it's fine.
+- Set the `WEBUI_URL` environment variable in your container to the URL you use to access your qBittorrent web UI. This can be the local IP (ex: http://192.168.1.17:8080) or a public URL if you have one (ex: https://qbittorrent.mydomain.com). As long as the container can reach this URL over its network, it's fine.
 - Set the `WEBUI_USER` environment variable in your container to the username you use to authenticate with your qBittorrent web UI.
 - Set the `WEBUI_PASS` environment variable in your container to the password you use to authenticate with your qBittorrent web UI.
 
@@ -101,8 +101,11 @@ $ docker run  -d \
               -e "PGID=123" \
               -e "LAN_NETWORK=192.168.0.0/24" \
               -p 8080:8080 \
+              --privileged \
               --cap-add NET_ADMIN \
+              --sysctl "net.ipv4.conf.all.rp_filter=2" \
               --sysctl "net.ipv4.conf.all.src_valid_mark=1" \
+              --sysctl "net.ipv6.conf.all.disable_ipv6=1" \
               --restart unless-stopped \
               --name qbittorrent-wireguard \
               tenseiken/qbittorrent-wireguard:latest

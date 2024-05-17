@@ -126,6 +126,9 @@ if [ -e /proc/$qbittorrentpid ]; then
 	echo "[INFO] HEALTH_CHECK_AMOUNT is set to ${HEALTH_CHECK_AMOUNT}" | ts '%Y-%m-%d %H:%M:%.S'
 
 	while true; do
+		# First wait for the health check interval.
+		sleep ${INTERVAL}
+		
 		# Confirm the process is still running, start it back up if it's not.
 		if ! ps -p $qbittorrentpid > /dev/null; then
 			echo "[ERROR] qBittorrent daemon is not running. Restarting..." | ts '%Y-%m-%d %H:%M:%.S'
@@ -169,10 +172,6 @@ if [ -e /proc/$qbittorrentpid ]; then
 			fi
 			unset cookie
 		fi
-		
-		sleep ${INTERVAL} &
-		# combine sleep background with wait so that the TERM trap above works
-		wait $!
 	done
 else
 	echo "[ERROR] qBittorrent failed to start!" | ts '%Y-%m-%d %H:%M:%.S'

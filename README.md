@@ -1,11 +1,11 @@
 # [qBittorrent](https://github.com/qbittorrent/qBittorrent) and WireGuard
 
-Docker container which runs [qBittorrent](https://github.com/qbittorrent/qBittorrent)-nox (headless) version 4.6.4 client while connecting to WireGuard with iptables killswitch to prevent IP leakage when the tunnel goes down.
+Docker container which runs [qBittorrent](https://github.com/qbittorrent/qBittorrent)-nox (headless) version 4.6.5 client while connecting to WireGuard with iptables killswitch to prevent IP leakage when the tunnel goes down.
 
 # Specs and Features
 * Base: Alpine Linux
 * Supports amd64 and arm64 architectures.
-* [qBittorrent](https://github.com/qbittorrent/qBittorrent) from the official Docker repo (qbittorrentofficial/qbittorrent-nox:4.6.4-1)
+* [qBittorrent](https://github.com/qbittorrent/qBittorrent) from the official Docker repo (qbittorrentofficial/qbittorrent-nox:4.6.5-1)
 * Uses the Wireguard VPN software.
 * IP tables killswitch to prevent IP leaking when VPN connection fails.
 * Configurable UID and GID for config files and /downloads for qBittorrent.

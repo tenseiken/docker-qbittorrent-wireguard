@@ -1,4 +1,4 @@
-# qBittorrent, OpenVPN and WireGuard, qbittorrentvpn
+# Based on the official qbittorrent-nox image
 FROM qbittorrentofficial/qbittorrent-nox:4.6.5-1
 
 WORKDIR /opt

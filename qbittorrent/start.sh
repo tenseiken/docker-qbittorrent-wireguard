@@ -67,6 +67,13 @@ else
 	echo "[WARNING] ENABLE_SSL is set to '${ENABLE_SSL}', SSL config ignored. No changes made." | ts '%Y-%m-%d %H:%M:%.S'
 fi
 
+# Check qbtUser, change UID/GID if they don't match the environment variables.
+qbtUID=$(id -u qbtUser)
+qbtGID=$(id -g qbtUser)
+if [[ ${PUID} !=  $qbtUID || ${PGID} != $qbtGID ]]; then
+	usermod -u ${PUID} -g ${PGID} qbtUser
+fi
+
 # Start qBittorrent
 echo "[INFO] Starting qBittorrent daemon..." | ts '%Y-%m-%d %H:%M:%.S'
 chmod -R 755 /config/qBittorrent

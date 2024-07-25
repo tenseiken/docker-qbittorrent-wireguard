@@ -37,6 +37,7 @@ RUN apk --no-cache --update-cache update \
     libnatpmp \
     openresolv \
     procps \
+    shadow \
     wireguard-tools
 
 # Remove src_valid_mark from wg-quick

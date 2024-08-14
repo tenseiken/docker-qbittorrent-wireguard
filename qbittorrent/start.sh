@@ -29,9 +29,12 @@ if [[ ${ENABLE_SSL} == "1" || ${ENABLE_SSL} == "true" || ${ENABLE_SSL} == "yes" 
 	fi
 	# Allow for cert and key to be secrets
 	if [[ -e /run/secrets/WebUICertificate.crt ]]; then
+		# Overwrite if they exist, assume secret is correct so that certs can be easily updated
+		rm /config/qBittorrent/config/WebUICertificate.crt
 		ln -s /run/secrets/WebUICertificate.crt /config/qBittorrent/config/WebUICertificate.crt
 	fi
 	if [[ -e /run/secrets/WebUIKey.key ]]; then
+		rm /config/qBittorrent/config/WebUIKey.key
 		ln -s /run/secrets/WebUIKey.key /config/qBittorrent/config/WebUIKey.key
 	fi
 	if [ ! -e /config/qBittorrent/config/WebUICertificate.crt ]; then

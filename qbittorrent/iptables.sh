@@ -2,7 +2,7 @@
 # Forked from binhex's OpenVPN dockers
 # Wait until tunnel is up
 
-while : ; do
+while :; do
 	tunnelstat=$(netstat -ie | grep -E "tun|tap|wg")
 	if [[ ! -z "${tunnelstat}" ]]; then
 		break
@@ -52,14 +52,14 @@ echo "[INFO] Docker network defined as ${docker_network_cidr}" | ts '%Y-%m-%d %H
 DEFAULT_GATEWAY=$(ip -4 route list 0/0 | cut -d ' ' -f 3)
 
 # split comma separated string into list from LAN_NETWORK env variable
-IFS=',' read -ra lan_network_list <<< "${LAN_NETWORK}"
+IFS=',' read -ra lan_network_list <<<"${LAN_NETWORK}"
 
 # process lan networks in the list
 for lan_network_item in "${lan_network_list[@]}"; do
 	# strip whitespace from start and end of lan_network_item
 	lan_network_item=$(echo "${lan_network_item}" | sed -e 's~^[ \t]*~~;s~[ \t]*$~~')
 
-	echo "[INFO] Adding ${lan_network_item} as route via docker ${docker_interface}"  | ts '%Y-%m-%d %H:%M:%.S'
+	echo "[INFO] Adding ${lan_network_item} as route via docker ${docker_interface}" | ts '%Y-%m-%d %H:%M:%.S'
 	ip route add "${lan_network_item}" via "${DEFAULT_GATEWAY}" dev "${docker_interface}"
 done
 
@@ -83,9 +83,13 @@ iptable_mangle_exit_code=$?
 if [[ $iptable_mangle_exit_code == 0 ]]; then
 	echo "[INFO] iptable_mangle support detected, adding fwmark for tables" | ts '%Y-%m-%d %H:%M:%.S'
 
+	# Make directory if doesn't exist
+	if [[ ! -e /etc/iproute2 ]]; then
+		mkdir /etc/iproute2
+	fi
 	# setup route for qBittorrent webui using set-mark to route traffic for port 8080 and 8999 to "${docker_interface}"
-	echo "8080    webui" >> /etc/iproute2/rt_tables
-	echo "8999    webui" >> /etc/iproute2/rt_tables
+	echo "8080    webui" >>/etc/iproute2/rt_tables
+	echo "8999    webui" >>/etc/iproute2/rt_tables
 	ip rule add fwmark 1 table webui
 	ip route add default via ${DEFAULT_GATEWAY} table webui
 fi
@@ -115,7 +119,7 @@ iptables -A INPUT -i "${docker_interface}" -p tcp --sport 8080 -j ACCEPT
 # additional port list for scripts or container linking
 if [[ ! -z "${ADDITIONAL_PORTS}" ]]; then
 	# split comma separated string into list from ADDITIONAL_PORTS env variable
-	IFS=',' read -ra additional_port_list <<< "${ADDITIONAL_PORTS}"
+	IFS=',' read -ra additional_port_list <<<"${ADDITIONAL_PORTS}"
 
 	# process additional ports in the list
 	for additional_port_item in "${additional_port_list[@]}"; do
@@ -169,7 +173,7 @@ iptables -A OUTPUT -o "${docker_interface}" -p tcp --sport 8080 -j ACCEPT
 # additional port list for scripts or container linking
 if [[ ! -z "${ADDITIONAL_PORTS}" ]]; then
 	# split comma separated string into list from ADDITIONAL_PORTS env variable
-	IFS=',' read -ra additional_port_list <<< "${ADDITIONAL_PORTS}"
+	IFS=',' read -ra additional_port_list <<<"${ADDITIONAL_PORTS}"
 
 	# process additional ports in the list
 	for additional_port_item in "${additional_port_list[@]}"; do
@@ -198,7 +202,7 @@ iptables -S
 echo "--------------------"
 
 # start the NAT-PMP port forward loop
-if [[ $ENABLEPROTONVPNPORTFWD -eq 1  ]] ; then
-	nohup /etc/qbittorrent/portfwd.sh > /dev/null 2>&1 &
+if [[ $ENABLEPROTONVPNPORTFWD -eq 1 ]]; then
+	nohup /etc/qbittorrent/portfwd.sh >/dev/null 2>&1 &
 fi
 exec /bin/bash /etc/qbittorrent/start.sh

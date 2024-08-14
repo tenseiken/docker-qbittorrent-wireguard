@@ -38,7 +38,8 @@ RUN apk --no-cache --update-cache update \
     openresolv \
     procps \
     shadow \
-    wireguard-tools
+    wireguard-tools \
+    openssl
 
 # Remove src_valid_mark from wg-quick
 RUN sed -i /net\.ipv4\.conf\.all\.src_valid_mark/d `which wg-quick`

@@ -1,5 +1,5 @@
 # Based on the official qbittorrent-nox image
-FROM qbittorrentofficial/qbittorrent-nox:5.1.0-1
+FROM qbittorrentofficial/qbittorrent-nox:5.1.2-1
 
 WORKDIR /opt
 

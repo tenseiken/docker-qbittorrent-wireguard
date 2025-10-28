@@ -13,6 +13,7 @@ Docker container which runs [qBittorrent](https://github.com/qbittorrent/qBittor
 * Automatically restarts the qBittorrent process in the event of it crashing.
 * Adds [VueTorrent](https://github.com/VueTorrent/VueTorrent) (alternate web UI) which can be enabled (or not) by the user.
 * Works with Proton VPN's port forward VPN servers to automatically enable forwarding in your container, and automatically sets the connection port in qBittorrent to match the forwarded port.
+* Provides optional support for [Cloudflare Access](https://developers.cloudflare.com/access/) to allow the ProtonVPN port forwarding to work when Cloudflare Access is enabled for the qBittorrent web UI.
 
 # Documentation
 All documentation is provided in the [wiki](https://github.com/tenseiken/docker-qbittorrent-wireguard/wiki).

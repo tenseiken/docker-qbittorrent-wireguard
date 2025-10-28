@@ -101,7 +101,9 @@ fi
 iptables -P INPUT DROP
 
 # set policy to drop ipv6 for input
-ip6tables -P INPUT DROP 1>&- 2>&-
+if [[ "${IPV6_DISABLED_ON_HOST}" != "1" ]]; then
+	ip6tables -P INPUT DROP 1>&- 2>&-
+fi
 
 # accept input to tunnel adapter
 iptables -A INPUT -i "${VPN_DEVICE_TYPE}" -j ACCEPT
@@ -148,7 +150,9 @@ iptables -A INPUT -i lo -j ACCEPT
 iptables -P OUTPUT DROP
 
 # set policy to drop ipv6 for output
-ip6tables -P OUTPUT DROP 1>&- 2>&-
+if [[ "${IPV6_DISABLED_ON_HOST}" != "1" ]]; then
+	ip6tables -P OUTPUT DROP 1>&- 2>&-
+fi
 
 # accept output from tunnel adapter
 iptables -A OUTPUT -o "${VPN_DEVICE_TYPE}" -j ACCEPT

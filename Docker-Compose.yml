@@ -13,6 +13,7 @@ services:
       - "PGID=567"
       - "LAN_NETWORK=192.168.1.0/24"
       - "QBT_LEGAL_NOTICE=confirm"
+      - "IPV6_DISABLED_ON_HOST=0"
     image: "docker.io/tenseiken/qbittorrent-wireguard:latest"
     ipc: "private"
     network_mode: "bridge"

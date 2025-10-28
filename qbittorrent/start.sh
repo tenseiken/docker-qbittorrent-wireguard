@@ -177,7 +177,7 @@ if [ -e /proc/$qbittorrentpid ]; then
 			if [[ -e /run/secrets/webui_pass ]]; then
 				WEBUI_PASS=$(cat /run/secrets/webui_pass)
 			fi
-			
+
 			# Set up Cloudflare Access headers if they exist
 			CF_HEADERS=""
 			if [[ ! -z "${CF_ACCESS_CLIENT_ID}" ]]; then
@@ -186,7 +186,7 @@ if [ -e /proc/$qbittorrentpid ]; then
 			if [[ ! -z "${CF_ACCESS_CLIENT_SECRET}" ]]; then
 				CF_HEADERS="$CF_HEADERS --header \"CF-Access-Client-Secret: $CF_ACCESS_CLIENT_SECRET\""
 			fi
-			
+
 			loginData="username=$WEBUI_USER&password=$WEBUI_PASS"
 			cookie=$(eval curl -i --silent --header \"Referer: $WEBUI_URL\" $CF_HEADERS --data $loginData $WEBUI_URL/api/v2/auth/login | grep "set-cookie" | awk '/set-cookie:/ {print $2}' | sed 's/;//') >/dev/null 2>&1
 			if [[ $cookie ]]; then

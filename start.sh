@@ -14,19 +14,19 @@ if [[ ! -z "${check_network}" ]]; then
 fi
 
 iptables_version=$(iptables -V)
-echo "[INFO] The container is currently running ${iptables_version}."  | ts '%Y-%m-%d %H:%M:%.S'
+echo "[INFO] The container is currently running ${iptables_version}." | ts '%Y-%m-%d %H:%M:%.S'
 
 # Create the directory to store WireGuard config files
 mkdir -p /config/wireguard
 
 # Set permmissions and owner for files in /config/wireguard directory
 set +e
-chown -R "${PUID}":"${PGID}" "/config/wireguard" &> /dev/null
+chown -R "${PUID}":"${PGID}" "/config/wireguard" &>/dev/null
 exit_code_chown=$?
 find "/config/wireguard" -type f -print0 | xargs -0 chmod 660
 exit_code_chmod=$?
 set -e
-if (( ${exit_code_chown} != 0 || ${exit_code_chmod} != 0 )); then
+if ((${exit_code_chown} != 0 || ${exit_code_chmod} != 0)); then
 	echo "[WARNING] Unable to chown/chmod /config/wireguard/, assuming SMB mountpoint" | ts '%Y-%m-%d %H:%M:%.S'
 fi
 
@@ -58,7 +58,7 @@ if [[ ! -z "${vpn_remote_line}" ]]; then
 else
 	echo "[ERROR] VPN configuration file ${VPN_CONFIG} does not contain 'remote' line, showing contents of file before exit..." | ts '%Y-%m-%d %H:%M:%.S'
 	cat "${VPN_CONFIG}"
-	
+
 	# Sleep so it wont 'spam restart'
 	sleep 10
 	exit 1
@@ -70,7 +70,7 @@ if [[ ! -z "${VPN_REMOTE}" ]]; then
 	echo "[INFO] VPN_REMOTE defined as '${VPN_REMOTE}'" | ts '%Y-%m-%d %H:%M:%.S'
 else
 	echo "[ERROR] VPN_REMOTE not found in ${VPN_CONFIG}, exiting..." | ts '%Y-%m-%d %H:%M:%.S'
-	
+
 	# Sleep so it wont 'spam restart'
 	sleep 10
 	exit 1
@@ -82,7 +82,7 @@ if [[ ! -z "${VPN_PORT}" ]]; then
 	echo "[INFO] VPN_PORT defined as '${VPN_PORT}'" | ts '%Y-%m-%d %H:%M:%.S'
 else
 	echo "[ERROR] VPN_PORT not found in ${VPN_CONFIG}, exiting..." | ts '%Y-%m-%d %H:%M:%.S'
-	
+
 	# Sleep so it wont 'spam restart'
 	sleep 10
 	exit 1
@@ -114,7 +114,7 @@ else
 fi
 
 # split comma seperated string into list from NAME_SERVERS env variable
-IFS=',' read -ra name_server_list <<< "${NAME_SERVERS}"
+IFS=',' read -ra name_server_list <<<"${NAME_SERVERS}"
 
 # process name servers in the list
 for name_server_item in "${name_server_list[@]}"; do
@@ -122,7 +122,7 @@ for name_server_item in "${name_server_list[@]}"; do
 	name_server_item=$(echo "${name_server_item}" | sed -e 's~^[ \t]*~~;s~[ \t]*$~~')
 
 	echo "[INFO] Adding ${name_server_item} to resolv.conf" | ts '%Y-%m-%d %H:%M:%.S'
-	echo "nameserver ${name_server_item}" >> /etc/resolv.conf
+	echo "nameserver ${name_server_item}" >>/etc/resolv.conf
 done
 
 if [[ -z "${PUID}" ]]; then
@@ -137,9 +137,9 @@ fi
 
 echo "[INFO] Starting WireGuard..." | ts '%Y-%m-%d %H:%M:%.S'
 cd /config/wireguard
-if ip link | grep -q `basename -s .conf $VPN_CONFIG`; then
+if ip link | grep -q $(basename -s .conf $VPN_CONFIG); then
 	wg-quick down $VPN_CONFIG || echo "WireGuard is down already" | ts '%Y-%m-%d %H:%M:%.S' # Run wg-quick down as an extra safeguard in case WireGuard is still up for some reason
-	sleep 0.5 # Just to give WireGuard a bit to go down
+	sleep 0.5                                                                               # Just to give WireGuard a bit to go down
 fi
 wg-quick up $VPN_CONFIG
 

@@ -13,6 +13,9 @@ services:
       - "PGID=567"
       - "LAN_NETWORK=192.168.1.0/24"
       - "QBT_LEGAL_NOTICE=confirm"
+      # Optional Cloudflare Access variables
+      # - "CF_ACCESS_CLIENT_ID=<your-client-id>"
+      # - "CF_ACCESS_CLIENT_SECRET=<your-client-secret>"
     image: "docker.io/tenseiken/qbittorrent-wireguard:latest"
     ipc: "private"
     network_mode: "bridge"

@@ -188,17 +188,16 @@ if [ -e /proc/$qbittorrentpid ]; then
 			fi
 
 			loginData="username=$WEBUI_USER&password=$WEBUI_PASS"
-			cookieCmd="curl -i --silent --header \"Referer: $WEBUI_URL $CF_HEADERS\" --data \"$loginData\" $WEBUI_URL/api/v2/auth/login"
-			cookie=$(eval $cookieCmd | grep "set-cookie" | awk '/set-cookie:/ {print $2}' | sed 's/;//') >/dev/null 2>&1
+			cookie=$(curl --show-headers --silent --header "Referer: $WEBUI_URL $CF_HEADERS" --data "$loginData" $WEBUI_URL/api/v2/auth/login | grep "set-cookie" | awk '/set-cookie:/ {print $2}' | sed 's/;//')
 
 			if [[ $cookie ]]; then
-				setPort=$(eval curl --silent "$CF_HEADERS $WEBUI_URL/api/v2/app/preferences" --cookie "$cookie" | jq '.listen_port') >/dev/null 2>&1
+				setPort=$(curl --silent --header "$CF_HEADERS" $WEBUI_URL/api/v2/app/preferences --cookie "$cookie" | jq '.listen_port')
 				currentPort=$(natpmpc -a 1 0 udp 60 -g 10.2.0.1 | grep "public port" | awk '/Mapped public port/ {print $4}')
 				if [[ $setPort -ne $currentPort ]]; then
 					portData="json={\"listen_port\":$currentPort}"
-					eval curl -i --silent "$CF_HEADERS" --data "$portData" "$WEBUI_URL/api/v2/app/setPreferences" --cookie "$cookie" >/dev/null 2>&1
+					curl --silent --header "$CF_HEADERS" --data "$portData" $WEBUI_URL/api/v2/app/setPreferences --cookie "$cookie"
 				fi
-				eval curl --silent -X 'POST' "$CF_HEADERS" "$WEBUI_URL/api/v2/auth/logout" -H 'accept: */*' -d '' --cookie "$cookie" >/dev/null 2>&1
+				curl --silent --request 'POST' --header "$CF_HEADERS" --header 'accept: */*' $WEBUI_URL/api/v2/auth/logout --cookie "$cookie"
 			else
 				echo "[WARNING] Unable to log into the web UI." | ts '%Y-%m-%d %H:%M:%.S'
 			fi

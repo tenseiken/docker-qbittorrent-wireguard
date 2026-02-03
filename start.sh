@@ -121,6 +121,8 @@ if ip link | grep -q $(basename -s .conf $VPN_CONFIG); then
 	wg-quick down $VPN_CONFIG || echo "WireGuard is down already" | ts '%Y-%m-%d %H:%M:%.S' # Run wg-quick down as an extra safeguard in case WireGuard is still up for some reason
 	sleep 0.5                                                                               # Just to give WireGuard a bit to go down
 fi
+
+resolvconf -u
 wg-quick up $VPN_CONFIG
 
 exec /bin/bash /etc/qbittorrent/iptables.sh

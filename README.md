@@ -6,7 +6,7 @@ Docker container which runs [qBittorrent](https://github.com/qbittorrent/qBittor
 
 * Base: Alpine Linux
 * Supports amd64 and arm64 architectures.
-* [qBittorrent](https://github.com/qbittorrent/qBittorrent) from the official Docker repo (qbittorrentofficial/qbittorrent-nox:5.1.4-1)
+* [qBittorrent](https://github.com/qbittorrent/qBittorrent) from the official Docker repo (qbittorrentofficial/qbittorrent-nox:5.1.4-2)
 * Uses the Wireguard VPN software.
 * IP tables killswitch to prevent IP leaking when VPN connection fails.
 * Configurable UID and GID for config files and /downloads for qBittorrent.

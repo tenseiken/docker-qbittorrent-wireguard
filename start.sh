@@ -122,12 +122,20 @@ if ip link | grep -q $(basename -s .conf $VPN_CONFIG); then
 	sleep 0.5                                                                               # Just to give WireGuard a bit to go down
 fi
 
-# Temporarily add default (Cloudflare) nameservers to resolv.conf in the event of a wg0.conf that uses FQDNs instead of IP addresses.
-# Will be overwritten by wg-quick with the DNS line from wg0.conf.
-echo "nameserver 1.1.1.1" >/etc/resolv.conf
-echo "nameserver 1.0.0.1" >/etc/resolv.conf
+# Extract the DNS addresses from wg0.conf; reformat them in resolv.conf format; store in /opt/dns
+# In order:
+ # read wg0.conf and find just the DNS line
+ # remove "DNS = " from it
+ # remove extraneous spaces
+ # replace commas with newlines
+ # append "nameserver " to the beginning of each line
+ # output to /opt/dns
+grep DNS /config/wireguard/wg0.conf | sed 's/DNS = //g' | sed 's/ //g' | sed 's/,/\n/g' | sed 's/^/nameserver /g' > /opt/dns
 
-resolvconf -u
+resolvconf -u >/dev/null 2>&1 # Required to prevent a signature mismatch error. Discard output because it's going to complain about no useable init system.
+resolvconf -a wg0 -m 0 -x < /opt/dns >/dev/null 2>&1 # Import the dns file with resolvconf. Discard output because it's going to complain about no useable init system.
+rm /opt/dns
+
 wg-quick up $VPN_CONFIG
 
 exec /bin/bash /etc/qbittorrent/iptables.sh

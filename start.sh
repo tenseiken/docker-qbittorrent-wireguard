@@ -122,6 +122,11 @@ if ip link | grep -q $(basename -s .conf $VPN_CONFIG); then
 	sleep 0.5                                                                               # Just to give WireGuard a bit to go down
 fi
 
+# Temporarily add default (Cloudflare) nameservers to resolv.conf in the event of a wg0.conf that uses FQDNs instead of IP addresses.
+# Will be overwritten by wg-quick with the DNS line from wg0.conf.
+echo "nameserver 1.1.1.1" >/etc/resolv.conf
+echo "nameserver 1.0.0.1" >/etc/resolv.conf
+
 resolvconf -u
 wg-quick up $VPN_CONFIG
 

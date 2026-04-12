@@ -130,7 +130,7 @@ fi
  # replace commas with newlines
  # append "nameserver " to the beginning of each line
  # output to /opt/dns
-grep DNS /config/wireguard/wg0.conf | sed 's/DNS = //g' | sed 's/ //g' | sed 's/,/\n/g' | sed 's/^/nameserver /g' > /opt/dns
+grep -i DNS /config/wireguard/wg0.conf | sed 's/DNS = //ig' | sed 's/ //g' | sed 's/,/\n/g' | sed 's/^/nameserver /g' > /opt/dns
 
 resolvconf -u >/dev/null 2>&1 # Required to prevent a signature mismatch error. Discard output because it's going to complain about no useable init system.
 resolvconf -a wg0 -m 0 -x < /opt/dns >/dev/null 2>&1 # Import the dns file with resolvconf. Discard output because it's going to complain about no useable init system.

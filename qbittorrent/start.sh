@@ -178,30 +178,40 @@ if [ -e /proc/$qbittorrentpid ]; then
 				WEBUI_PASS=$(cat /run/secrets/webui_pass)
 			fi
 
-			# Set up Cloudflare Access headers if they exist
-			CF_HEADERS=""
-			if [[ ! -z "${CF_ACCESS_CLIENT_ID}" ]]; then
-				CF_HEADERS="$CF_HEADERS --header \"CF-Access-Client-Id: $CF_ACCESS_CLIENT_ID\""
-			fi
-			if [[ ! -z "${CF_ACCESS_CLIENT_SECRET}" ]]; then
-				CF_HEADERS="$CF_HEADERS --header \"CF-Access-Client-Secret: $CF_ACCESS_CLIENT_SECRET\""
-			fi
-
 			loginData="username=$WEBUI_USER&password=$WEBUI_PASS"
-			cookie=$(curl --show-headers --silent --header "Referer: $WEBUI_URL $CF_HEADERS" --data "$loginData" $WEBUI_URL/api/v2/auth/login | grep "set-cookie" | awk '/set-cookie:/ {print $2}' | sed 's/;//')
 
-			if [[ $cookie ]]; then
-				setPort=$(curl --silent --header "$CF_HEADERS" $WEBUI_URL/api/v2/app/preferences --cookie "$cookie" | jq '.listen_port')
-				currentPort=$(natpmpc -a 1 0 udp 60 -g 10.2.0.1 | grep "public port" | awk '/Mapped public port/ {print $4}')
-				if [[ $setPort -ne $currentPort ]]; then
-					portData="json={\"listen_port\":$currentPort}"
-					curl --silent --header "$CF_HEADERS" --data "$portData" $WEBUI_URL/api/v2/app/setPreferences --cookie "$cookie"
+			# Cloudflare mode:
+			if [[ ! -z "${CF_ACCESS_CLIENT_ID}" ]] && [[ ! -z "${CF_ACCESS_CLIENT_SECRET}" ]]; then
+				cookie=$(curl --show-headers --silent --header "Referer: $WEBUI_URL" --header "CF-Access-Client-Id: $CF_ACCESS_CLIENT_ID" --header "CF-Access-Client-Secret: $CF_ACCESS_CLIENT_SECRET" --data "$loginData" $WEBUI_URL/api/v2/auth/login | grep "set-cookie: SID" | awk '/set-cookie:/ {print $2}' | sed 's/;//')
+
+				if [[ $cookie ]]; then
+					setPort=$(curl --silent --header "CF-Access-Client-Id: $CF_ACCESS_CLIENT_ID" --header "CF-Access-Client-Secret: $CF_ACCESS_CLIENT_SECRET" $WEBUI_URL/api/v2/app/preferences --cookie "$cookie" | jq '.listen_port')
+					currentPort=$(natpmpc -a 1 0 udp 60 -g 10.2.0.1 | grep "public port" | awk '/Mapped public port/ {print $4}')
+					if [[ $setPort -ne $currentPort ]]; then
+						portData="json={\"listen_port\":$currentPort}"
+						curl --silent --header "CF-Access-Client-Id: $CF_ACCESS_CLIENT_ID" --header "CF-Access-Client-Secret: $CF_ACCESS_CLIENT_SECRET" --data "$portData" $WEBUI_URL/api/v2/app/setPreferences --cookie "$cookie"
+					fi
+					curl --silent --request 'POST' --header "CF-Access-Client-Id: $CF_ACCESS_CLIENT_ID" --header "CF-Access-Client-Secret: $CF_ACCESS_CLIENT_SECRET" --header 'accept: */*' $WEBUI_URL/api/v2/auth/logout --cookie "$cookie"
+				else
+					echo "[WARNING] Unable to log into the web UI. Cloudflare headers used." | ts '%Y-%m-%d %H:%M:%.S'
 				fi
-				curl --silent --request 'POST' --header "$CF_HEADERS" --header 'accept: */*' $WEBUI_URL/api/v2/auth/logout --cookie "$cookie"
-			else
-				echo "[WARNING] Unable to log into the web UI." | ts '%Y-%m-%d %H:%M:%.S'
+				unset cookie
+			else # Non-Cloudflare mode:
+				cookie=$(curl --show-headers --silent --header "Referer: $WEBUI_URL" --data "$loginData" $WEBUI_URL/api/v2/auth/login | grep "set-cookie: SID" | awk '/set-cookie:/ {print $2}' | sed 's/;//')
+
+				if [[ $cookie ]]; then
+					setPort=$(curl --silent $WEBUI_URL/api/v2/app/preferences --cookie "$cookie" | jq '.listen_port')
+					currentPort=$(natpmpc -a 1 0 udp 60 -g 10.2.0.1 | grep "public port" | awk '/Mapped public port/ {print $4}')
+					if [[ $setPort -ne $currentPort ]]; then
+						portData="json={\"listen_port\":$currentPort}"
+						curl --silent --data "$portData" $WEBUI_URL/api/v2/app/setPreferences --cookie "$cookie"
+					fi
+					curl --silent --request 'POST' --header 'accept: */*' $WEBUI_URL/api/v2/auth/logout --cookie "$cookie"
+				else
+					echo "[WARNING] Unable to log into the web UI. No Cloudflare headers used." | ts '%Y-%m-%d %H:%M:%.S'
+				unset cookie
+				fi
 			fi
-			unset cookie
 		fi
 	done
 else

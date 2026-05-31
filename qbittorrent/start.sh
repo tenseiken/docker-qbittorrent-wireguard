@@ -182,11 +182,11 @@ if [ -e /proc/$qbittorrentpid ]; then
 
 			# Cloudflare mode:
 			if [[ ! -z "${CF_ACCESS_CLIENT_ID}" ]] && [[ ! -z "${CF_ACCESS_CLIENT_SECRET}" ]]; then
-				cookie=$(curl --show-headers --silent --header "Referer: $WEBUI_URL" --header "CF-Access-Client-Id: $CF_ACCESS_CLIENT_ID" --header "CF-Access-Client-Secret: $CF_ACCESS_CLIENT_SECRET" --data "$loginData" $WEBUI_URL/api/v2/auth/login | grep "set-cookie: SID" | awk '/set-cookie:/ {print $2}' | sed 's/;//')
+				cookie=$(curl --show-headers --silent --header "Referer: $WEBUI_URL" --header "CF-Access-Client-Id: $CF_ACCESS_CLIENT_ID" --header "CF-Access-Client-Secret: $CF_ACCESS_CLIENT_SECRET" --data "$loginData" $WEBUI_URL/api/v2/auth/login | grep "set-cookie: QBT_SID" | head -1 | awk '/set-cookie:/ {print $2}' | sed 's/;//')
 
 				if [[ $cookie ]]; then
 					setPort=$(curl --silent --header "CF-Access-Client-Id: $CF_ACCESS_CLIENT_ID" --header "CF-Access-Client-Secret: $CF_ACCESS_CLIENT_SECRET" $WEBUI_URL/api/v2/app/preferences --cookie "$cookie" | jq '.listen_port')
-					currentPort=$(natpmpc -a 1 0 udp 60 -g 10.2.0.1 | grep "public port" | awk '/Mapped public port/ {print $4}')
+					currentPort=$(natpmpc -a 1 0 udp 60 -g 10.2.0.1 | grep "public port" | head -1 | awk '/Mapped public port/ {print $4}')
 					if [[ $setPort -ne $currentPort ]]; then
 						portData="json={\"listen_port\":$currentPort}"
 						curl --silent --header "CF-Access-Client-Id: $CF_ACCESS_CLIENT_ID" --header "CF-Access-Client-Secret: $CF_ACCESS_CLIENT_SECRET" --data "$portData" $WEBUI_URL/api/v2/app/setPreferences --cookie "$cookie"
@@ -197,7 +197,7 @@ if [ -e /proc/$qbittorrentpid ]; then
 				fi
 				unset cookie
 			else # Non-Cloudflare mode:
-				cookie=$(curl --show-headers --silent --header "Referer: $WEBUI_URL" --data "$loginData" $WEBUI_URL/api/v2/auth/login | grep "set-cookie: SID" | awk '/set-cookie:/ {print $2}' | sed 's/;//')
+				cookie=$(curl --show-headers --silent --header "Referer: $WEBUI_URL" --data "$loginData" $WEBUI_URL/api/v2/auth/login | grep "set-cookie: QBT_SID" | head -1 | awk '/set-cookie:/ {print $2}' | sed 's/;//')
 
 				if [[ $cookie ]]; then
 					setPort=$(curl --silent $WEBUI_URL/api/v2/app/preferences --cookie "$cookie" | jq '.listen_port')

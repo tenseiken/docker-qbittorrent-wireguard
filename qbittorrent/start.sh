@@ -84,6 +84,15 @@ if [[ ${PUID} != $qbtUID || ${PGID} != $qbtGID ]]; then
 	usermod -u ${PUID} -g ${PGID} qbtUser
 fi
 
+# Check for presence of qBittorrent's lockfile, delete if present.
+LOCKFILE="/config/qBittorrent/config/lockfile"
+
+if [ -e $LOCKFILE ]; then
+	echo "[WARNING] The qBittorrent lockfile exists. Did you cleanly shutdown qBittorrent last time?" | ts '%Y-%m-%d %H:%M:%.S'
+	echo "[WARNING] Deleting lockfile..." | ts '%Y-%m-%d %H:%M:%.S'
+    rm -f $LOCKFILE
+fi
+
 # Start qBittorrent
 echo "[INFO] Starting qBittorrent daemon..." | ts '%Y-%m-%d %H:%M:%.S'
 chmod -R 755 /config/qBittorrent

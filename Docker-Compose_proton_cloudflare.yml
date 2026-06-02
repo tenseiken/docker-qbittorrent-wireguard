@@ -1,7 +1,5 @@
 services:
   qbittorrent-wireguard:
-    secrets:
-      - "webui_pass"
     cap_add:
       - "NET_ADMIN"
     container_name: "qbittorrent-wireguard"
@@ -13,9 +11,8 @@ services:
       - "PGID=567"
       - "LAN_NETWORK=192.168.1.0/24"
       - "QBT_LEGAL_NOTICE=confirm"
-      # Optional Cloudflare Access variables
-      # - "CF_ACCESS_CLIENT_ID=<your-client-id>"
-      # - "CF_ACCESS_CLIENT_SECRET=<your-client-secret>"
+      - "ENABLEPROTONVPNPORTFWD=1"
+      - "WEBUI_URL=https://subdomain.domain.tld"
     image: "docker.io/tenseiken/qbittorrent-wireguard:latest"
     ipc: "private"
     network_mode: "bridge"
@@ -36,6 +33,14 @@ services:
       - "/host/path/to/downloads:/downloads"
       - "/host/path/to/config:/config"
     working_dir: "/opt"
+    secrets:
+      - "WEBUI_APIKEY"
+      - "CF_ACCESS_CLIENT_ID"
+      - "CF_ACCESS_CLIENT_SECRET"
 secrets:
-  webui_pass:
-    file: "/path/to/webui_pass"
+  WEBUI_APIKEY:
+    file: "/path/on/host/to/WEBUI_APIKEY"
+  CF_ACCESS_CLIENT_ID:
+    file: "/path/on/host/to/CF_ACCESS_CLIENT_ID"
+  CF_ACCESS_CLIENT_SECRET:
+    file: "/path/on/host/to/CF_ACCESS_CLIENT_SECRET"

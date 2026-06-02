@@ -1,0 +1,40 @@
+services:
+  qbittorrent-wireguard:
+    cap_add:
+      - "NET_ADMIN"
+    container_name: "qbittorrent-wireguard"
+    entrypoint:
+      - "/bin/bash"
+      - "/start.sh"
+    environment:
+      - "PUID=1234"
+      - "PGID=567"
+      - "LAN_NETWORK=192.168.1.0/24"
+      - "QBT_LEGAL_NOTICE=confirm"
+      - "ENABLEPROTONVPNPORTFWD=1"
+      - "WEBUI_URL=https://subdomain.domain.tld" # OR use the LAN IP if you're not exposing the web UI to the internet (ex: http://192.168.1.123:8080)
+    image: "docker.io/tenseiken/qbittorrent-wireguard:latest"
+    ipc: "private"
+    network_mode: "bridge"
+    ports:
+      - "8999:8999/tcp"
+      - "8999:8999/udp"
+      - "8080:8080/tcp"
+    restart: "unless-stopped"
+    security_opt:
+      - "label=disable"
+    stdin_open: true
+    sysctls:
+      - "net.ipv4.conf.all.rp_filter=2"
+      - "net.ipv4.conf.all.src_valid_mark=1"
+      - "net.ipv6.conf.all.disable_ipv6=1"
+    tty: true
+    volumes:
+      - "/host/path/to/downloads:/downloads"
+      - "/host/path/to/config:/config"
+    working_dir: "/opt"
+    secrets:
+      - "WEBUI_APIKEY"
+secrets:
+  WEBUI_APIKEY:
+    file: "/path/on/host/to/WEBUI_APIKEY"

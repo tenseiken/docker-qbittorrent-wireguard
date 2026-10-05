@@ -101,13 +101,13 @@ fi
 iptables -P INPUT DROP
 
 # set policy to drop ipv6 for input
-ip6tables -P INPUT DROP 1>&- 2>&-
+ip6tables -P INPUT DROP
 
 # accept input to tunnel adapter
 iptables -A INPUT -i "${VPN_DEVICE_TYPE}" -j ACCEPT
 
 # accept input to tunnel adapter (ipv6)
-ip6tables -A INPUT -i "${VPN_DEVICE_TYPE}" -j ACCEPT 1>&- 2>&-
+ip6tables -A INPUT -i "${VPN_DEVICE_TYPE}" -j ACCEPT
 
 # accept input to/from LANs (172.x range is internal dhcp)
 iptables -A INPUT -s "${docker_network_cidr}" -d "${docker_network_cidr}" -j ACCEPT
@@ -141,14 +141,20 @@ fi
 # accept input icmp (ping)
 iptables -A INPUT -p icmp --icmp-type echo-reply -j ACCEPT
 
-# accept input icmpv6 (ping, neighbor discovery)
-ip6tables -A INPUT -p icmpv6 -j ACCEPT 1>&- 2>&-
-
 # accept input to local loopback
 iptables -A INPUT -i lo -j ACCEPT
 
 # accept input to local loopback (ipv6)
-ip6tables -A INPUT -i lo -j ACCEPT 1>&- 2>&-
+ip6tables -A INPUT -i lo -j ACCEPT
+
+# accept input for ipv6 link-local (needed for IPv6 Neighbor Discovery)
+ip6tables -A INPUT -s fe80::/10 -j ACCEPT
+
+# accept input for ipv6 multicast (needed for IPv6 Neighbor Discovery)
+ip6tables -A INPUT -d ff00::/8 -j ACCEPT
+
+# accept input icmpv6 (ping, neighbor discovery)
+ip6tables -A INPUT -p icmpv6 -j ACCEPT
 
 # output iptable rules
 ###
@@ -157,13 +163,13 @@ ip6tables -A INPUT -i lo -j ACCEPT 1>&- 2>&-
 iptables -P OUTPUT DROP
 
 # set policy to drop ipv6 for output
-ip6tables -P OUTPUT DROP 1>&- 2>&-
+ip6tables -P OUTPUT DROP
 
 # accept output from tunnel adapter
 iptables -A OUTPUT -o "${VPN_DEVICE_TYPE}" -j ACCEPT
 
 # accept output from tunnel adapter (ipv6)
-ip6tables -A OUTPUT -o "${VPN_DEVICE_TYPE}" -j ACCEPT 1>&- 2>&-
+ip6tables -A OUTPUT -o "${VPN_DEVICE_TYPE}" -j ACCEPT
 
 # accept output to/from LANs
 iptables -A OUTPUT -s "${docker_network_cidr}" -d "${docker_network_cidr}" -j ACCEPT
@@ -205,14 +211,20 @@ fi
 # accept output for icmp (ping)
 iptables -A OUTPUT -p icmp --icmp-type echo-request -j ACCEPT
 
-# accept output for icmpv6 (ping, neighbor discovery)
-ip6tables -A OUTPUT -p icmpv6 -j ACCEPT 1>&- 2>&-
-
 # accept output from local loopback adapter
 iptables -A OUTPUT -o lo -j ACCEPT
 
 # accept output from local loopback adapter (ipv6)
-ip6tables -A OUTPUT -o lo -j ACCEPT 1>&- 2>&-
+ip6tables -A OUTPUT -o lo -j ACCEPT
+
+# accept output for ipv6 link-local (needed for IPv6 Neighbor Discovery)
+ip6tables -A OUTPUT -s fe80::/10 -j ACCEPT
+
+# accept output for ipv6 multicast (needed for IPv6 Neighbor Discovery)
+ip6tables -A OUTPUT -d ff00::/8 -j ACCEPT
+
+# accept output icmpv6 (ping, neighbor discovery)
+ip6tables -A OUTPUT -p icmpv6 -j ACCEPT
 
 echo "[INFO] iptables defined as follows..." | ts '%Y-%m-%d %H:%M:%.S'
 echo "--------------------"
